@@ -1,6 +1,6 @@
-# OpenVoice API Server
+# Openvoicex
 
-This repository contains different implementations of the OpenVoice Text-to-Speech (TTS) API server, offering both local and cloud deployment options using FastAPI and Modal.
+OpenVoiceX is an enhanced and optimized implementation of the OpenVoice Text-to-Speech (TTS) engine. This project provides a production-ready API service with both local and cloud deployment capabilities, leveraging FastAPI for robust local development and Modal for scalable cloud infrastructure. The optimizations focus on improved performance, resource efficiency, and enterprise-grade reliability while maintaining the high-quality voice synthesis capabilities of the original OpenVoice library.
 
 ## Overview
 
