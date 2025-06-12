@@ -1,13 +1,15 @@
 import io
-import os
 import base64
 import torch
 import tempfile
 from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+from pydub import AudioSegment
 from pydantic import BaseModel
 from openvoice import se_extractor
 from openvoice.api import ToneColorConverter
 from melo.api import TTS
+from pydub import AudioSegment
 
 # Init
 app = FastAPI()
@@ -35,14 +37,11 @@ def generate_audio(data: TTSRequest):
     speaker_key_formatted = data.speaker_key.lower().replace('_', '-')
     source_se = torch.load(f'checkpoints_v2/base_speakers/ses/{speaker_key_formatted}.pth', map_location=device)
 
-    # Create temp files
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as src_wav, \
          tempfile.NamedTemporaryFile(suffix=".wav", delete=True) as out_wav:
 
-        # Generate TTS audio to temp
+        # Generate and convert voice
         model.tts_to_file(data.text, speaker_id, src_wav.name, speed=data.speed)
-
-        # Apply tone conversion
         tone_color_converter.convert(
             audio_src_path=src_wav.name,
             src_se=source_se,
@@ -51,12 +50,10 @@ def generate_audio(data: TTSRequest):
             message="@MyShell"
         )
 
-        # Read final output and encode to base64
-        out_wav.seek(0)
-        audio_bytes = out_wav.read()
-        base64_audio = base64.b64encode(audio_bytes).decode("utf-8")
+        # Load WAV and convert to FLAC
+        audio = AudioSegment.from_file(out_wav.name, format="wav")
+        flac_io = io.BytesIO()
+        audio.export(flac_io, format="flac")
+        flac_io.seek(0)
 
-    return {
-        "success": True,
-        "base64_wav": base64_audio
-    }
+        return StreamingResponse(flac_io, media_type="audio/flac")

@@ -23,7 +23,8 @@ tone_color_converter.load_ckpt(f'{ckpt_converter}/checkpoint.pth')
 
 source_se = torch.load(f'{ckpt_base}/en_default_se.pth').to(device)
 
-reference_speaker = 'resources/uncle_original.mp3'
+# reference_speaker = 'resources/fry_original.mp3'
+reference_speaker = 'resources/fry_original.mp3'
 target_se, _ = se_extractor.get_se(reference_speaker, tone_color_converter, target_dir='processed', vad=True)
 
 class TTSRequest(BaseModel):
