@@ -22,7 +22,7 @@ tone_color_converter.load_ckpt(f'{ckpt_converter}/checkpoint.pth')
 
 model = TTS(language='EN', device=device)
 speaker_ids = model.hps.data.spk2id
-reference_speaker = 'resources/uncle_original.mp3'
+reference_speaker = 'resources/tifa_original.mp3'
 target_se, _ = se_extractor.get_se(reference_speaker, tone_color_converter, vad=True)
 
 # Request schema
